@@ -10,6 +10,9 @@ import { Sala } from './models';
 Amplify.configure(awsconfig);
 
 function App() {
+    const [titulo, setTitulo] = useState('');
+    const [descricao, setDescricao] = useState('');
+
     const [salas, setSalas] = useState([]);
 
     const getSalas = async () => {
@@ -18,6 +21,23 @@ function App() {
             setSalas(salas);
         } catch (error) {
             console.log("Error retrieving posts", error);
+        }
+    }
+
+    const handdleAddSala = async (event) => {
+        event.preventDefault();
+
+        try {
+            const dados = new Sala({
+                name: titulo,
+                description: descricao
+            });
+
+            await DataStore.save(dados);
+            
+            getSalas();
+        } catch (error) {
+            console.log("Error saving post", error);
         }
     }
 
@@ -60,28 +80,57 @@ function App() {
             </nav>
             <main>
                 <div className="container my-4">
-                    <div className="card">
-                        <div className="card-header d-flex">
-                            <button className="btn btn-success">Novo</button>
+                    <form className="card shadow-sm mb-3" onSubmit={handdleAddSala}>
+                        <div className="card-header">
+                            <h5 className="card-title m-0">Nova sala</h5>
                         </div>
                         <div className="card-body">
-                            {JSON.stringify(salas)}
-                            <table class="table">
+                            <div className="form-row">
+                                <div className="col-12">
+                                    <div className="form-group d-flex flex-column align-items-start">
+                                        <label>Titulo:</label>
+                                        <input className="form-control" value={titulo} onChange={e => setTitulo(e.target.value)} />
+                                    </div>
+                                </div>
+                                <div className="col-12">
+                                    <div className="form-group d-flex flex-column align-items-start">
+                                        <label>Descricao:</label>
+                                        <textarea className="form-control" value={descricao} onChange={e => setDescricao(e.target.value)}></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card-footer d-flex justify-content-end">
+                            <button className="btn btn-success" type="submit">Salvar</button>
+                        </div>
+                    </form>
+
+                    <hr/>
+
+                    <div className="card shadow-sm">
+                        <div className="card-body">
+                            <table className="table">
                                 <thead>
                                     <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
+                                    <th scope="col">Titulo</th>
+                                    <th scope="col">Descricao</th>
+                                    <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
+                                    {
+                                        salas.map(sala => {
+                                            return (
+                                                <tr key={sala.id}>
+                                                    <th scope="row">{sala.id}</th>
+                                                    <td>{sala.name}</td>
+                                                    <td>{sala.description}</td>
+                                                    <td></td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
                                 </tbody>
                             </table>
                         </div>

@@ -3,3 +3,9 @@ type Sala @model {
   name: String!
   description: String
 }
+
+type Evento @model {
+  id: ID!
+  name: String!
+  description: String
+}
