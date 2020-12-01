@@ -1,0 +1,5 @@
+type Sala @model {
+  id: ID!
+  name: String!
+  description: String
+}
